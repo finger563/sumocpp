@@ -48,11 +48,11 @@ public:
   krpc::Response response;
 };
 
-class KRPCI
+class SUMOCPP
 {
 public:
-  KRPCI(std::string name="localClient", std::string ip="127.0.0.1", int port=50000, int streamPort=50001);
-  ~KRPCI();
+  SUMOCPP(std::string name="localClient", std::string ip="127.0.0.1", int port=50000, int streamPort=50001);
+  ~SUMOCPP();
 
   bool Connect();
   bool Close();

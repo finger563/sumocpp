@@ -1,4 +1,4 @@
-#include "krpci.hpp"
+#include "sumocpp.hpp"
 
 using namespace std;
 
@@ -15,7 +15,7 @@ public:
       }
     // velocity
     double x,y,z;
-    KRPCI::Vessel_Velocity_parseResponse(response, x, y, z);
+    SUMOCPP::Vessel_Velocity_parseResponse(response, x, y, z);
     printf("CLASS METHOD WITH INST VAR %d : (x,y,z) = (%f,%f,%f)\n",myInstVar,x,y,z);
   }
   int myInstVar;
@@ -30,13 +30,13 @@ void myStreamFunc(krpc::Response& response)
     }
   // position
   double x,y,z;
-  KRPCI::Vessel_Position_parseResponse(response, x, y, z);
+  SUMOCPP::Vessel_Position_parseResponse(response, x, y, z);
   printf("(x,y,z) = (%f,%f,%f)\n",x,y,z);
 }
 
 int main(int argc, char** argv)
 {
-  KRPCI client("wrapperTest");
+  SUMOCPP client("wrapperTest");
   if ( client.Connect() )
     {
       int numVessels;
@@ -84,10 +84,10 @@ int main(int argc, char** argv)
       client.Control_set_Roll(controlID,20.0);
       client.Control_set_Yaw(controlID,30.0);
 
-      // stream name can be anything, but must be unique for a given client (i.e. KRPCI)
+      // stream name can be anything, but must be unique for a given client (i.e. SUMOCPP)
       std::string streamName = "streamTest_Vessel_Position";
       krpc::Request request;
-      KRPCI::Vessel_Position_createRequest(vesselID, orbitalRefFrame, request);
+      SUMOCPP::Vessel_Position_createRequest(vesselID, orbitalRefFrame, request);
 
       client.CreateStream(streamName,request, myStreamFunc);
 
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
       myclass class1 = myclass(50);
       std::string streamName2 = "streamtest_Vessel_Velocity";
       krpc::Request request2;
-      KRPCI::Vessel_Velocity_createRequest(vesselID, orbitalRefFrame, request2);
+      SUMOCPP::Vessel_Velocity_createRequest(vesselID, orbitalRefFrame, request2);
 
       client.CreateStream(streamName2, request2, boost::bind(&myclass::classStreamFunc, class1, _1));
 
