@@ -75,6 +75,18 @@ bool SUMOI::Close()
   connected_ = false;
 }
 
+bool SUMOI::parseMessage(const char* msg, int& msgLen)
+{
+  // read 4 byte message length
+
+  // per command:
+  // read 1 byte command length
+  // if <command length> is 0:
+  //   read 4 byte command length
+  // read 1 byte command id
+  // read <command length> bytes of command
+}
+
 bool SUMOI::createRequestString(krpc::Request req, std::string& str)
 {
   uint64_t size;
