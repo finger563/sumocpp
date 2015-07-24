@@ -1,0 +1,129 @@
+$hash_include "krpci/krpci.hpp"
+using namespace std;
+
+#if $services != []
+#for $service in $services
+#if $service.procedures != []
+#for $procedure in $service.procedures
+#if $procedure.parameters != []
+bool KRPCI::${procedure.name}_createRequest(${procedure.input_args}, krpc::Request& request)
+#else
+bool KRPCI::${procedure.name}_createRequest(krpc::Request& request)
+#end if
+{
+  request.set_service("${service.name}");
+  request.set_procedure("${procedure.name}");
+#if $procedure.parameters != []
+  krpc::Argument* argument;
+#end if
+#if $procedure.parameters != []
+#for $parameter in $procedure.parameters
+  argument = request.add_arguments();
+  argument->set_position(${parameter.position});
+#if $parameter.datatype == "uint64_t"
+  argument->mutable_value()->resize(10);
+  CodedOutputStream::WriteVarint64ToArray(${parameter.name}, 
+		      (unsigned char *)argument->mutable_value()->data());
+
+#else if $parameter.datatype == "float"
+  argument->set_value((const char*)(&${parameter.name}), sizeof(${parameter.name}));
+
+#else if $parameter.datatype == "double"
+  argument->set_value((const char*)(&${parameter.name}), sizeof(${parameter.name}));  
+
+#else if $parameter.datatype == "bool"
+  argument->mutable_value()->resize(10);
+  CodedOutputStream::WriteVarint32ToArray(${parameter.name}, 
+		      (unsigned char *)argument->mutable_value()->data());
+
+#else if $parameter.datatype == "KRPC.Tuple"
+  krpc::Tuple ${parameter.name};
+  KRPCI::EncodeTuple(${parameter.name}_x, 
+		     ${parameter.name}_y, 
+		     ${parameter.name}_z, 
+		     ${parameter.name}); 
+  ${parameter.name}.SerializeToString(argument->mutable_value());
+
+#else if $parameter.datatype == "KRPC.List"
+  ${parameter.name}.SerializeToString(argument->mutable_value());
+
+#else if $parameter.datatype == "KRPC.Dictionary"
+  ${parameter.name}.SerializeToString(argument->mutable_value());
+
+#end if
+#end for
+#end if
+  return true;
+}
+
+bool KRPCI::${procedure.name}(${procedure.args})
+{
+  if (!connected_)
+    return false;
+  krpc::Request request;
+  krpc::Response response;
+#if $procedure.parameters != []
+  KRPCI::${procedure.name}_createRequest(${procedure.request_args}, request);
+#else
+  KRPCI::${procedure.name}_createRequest(request);
+#end if
+
+  if (getResponseFromRequest(request,response))
+    {
+      if (response.has_error())
+	{
+	  std::cout << "Response error: " << response.error() << endl;
+	  return false;
+	}
+#if $procedure.return_type == "uint64"
+      ${procedure.name}_parseResponse(response, return_value);
+#else if $procedure.return_type == "KRPC.Tuple"
+      ${procedure.name}_parseResponse(response, x, y, z);
+#else if $procedure.return_type == "KRPC.List"
+      ${procedure.name}_parseResponse(response, return_vector);
+#else if $procedure.return_type == "double"
+      ${procedure.name}_parseResponse(response, return_value);
+#else if $procedure.return_type == "float"
+      ${procedure.name}_parseResponse(response, return_value);
+#end if
+    }
+  return true;
+}
+
+#if $procedure.output_args != ""
+bool KRPCI::${procedure.name}_parseResponse(krpc::Response response, ${procedure.output_args})
+{
+#if $procedure.return_type == "uint64"
+  KRPCI::DecodeVarint(return_value, 
+		      (char *)response.return_value().data(), 
+		      response.return_value().size());
+#else if $procedure.return_type == "KRPC.Tuple"
+  krpc::Tuple tuple;
+  tuple.ParseFromString(response.return_value());
+  KRPCI::DecodeTuple(tuple, x, y, z);
+#else if $procedure.return_type == "KRPC.List"
+  krpc::List output_list;
+  output_list.ParseFromString(response.return_value());
+  for(int i=0; i< output_list.items_size(); i++)
+    {
+      uint64_t return_value;
+      KRPCI::DecodeVarint(return_value,
+			  (char *)output_list.items(i).data(),
+			  output_list.items(i).size());
+      return_vector.push_back(return_value);
+    }
+#else if $procedure.return_type == "double"
+  return_value = 0.0;
+  memcpy(&return_value, response.return_value().data(), response.return_value().size());
+#else if $procedure.return_type == "float"
+  return_value = 0.0;
+  memcpy(&return_value, response.return_value().data(), response.return_value().size());
+#end if
+  return true;
+}
+#end if
+
+#end for
+#end if
+#end for
+#end if
