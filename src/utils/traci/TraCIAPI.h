@@ -34,7 +34,7 @@
 
 #include <vector>
 #include <string>
-#include <utils/tcpip/socket.h>
+#include <foreign/tcpip/socket.h>
 #include <utils/common/SUMOTime.h>
 
 

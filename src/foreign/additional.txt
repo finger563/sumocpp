@@ -1,0 +1,20 @@
+The subfolders contain additional libraries used by SUMO:
+
+- Mersenne Twister Random Number Generator
+ Random number generator
+ Used Version: 1.0
+ Modifications: none
+ Original Page: http://www-personal.engin.umich.edu/~wagnerr/MersenneTwister.html
+
+- tcpip
+ Simple TCP/IP Socket Class to communicate with other programs
+ Used Version: always the most recent one (included via svn:externals)
+ Modifications: none
+ Original Page: http://shawn.sf.net
+ 
+- EulerSpiral
+ Approximating curves
+ Used version: unknown
+ Modifications: fixing warnings (removing unused variables, initializing variables); relicensed under LGPL, see license file
+ Original page: http://www.lems.brown.edu/vision/researchAreas/EulerSpiral/
+
