@@ -76,7 +76,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = TraCITestClient$(EXEEXT)
+bin_PROGRAMS = TraCITestClient$(EXEEXT) tlc$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/config.h.in $(top_srcdir)/depcomp
@@ -95,6 +95,10 @@ am_TraCITestClient_OBJECTS = tracitestclient_main.$(OBJEXT) \
 TraCITestClient_OBJECTS = $(am_TraCITestClient_OBJECTS)
 TraCITestClient_DEPENDENCIES = utils/common/libcommon.a \
 	utils/traci/libtraci.a foreign/tcpip/libtcpip.a
+am_tlc_OBJECTS = tlc_main.$(OBJEXT) tlc.$(OBJEXT)
+tlc_OBJECTS = $(am_tlc_OBJECTS)
+tlc_DEPENDENCIES = utils/common/libcommon.a utils/traci/libtraci.a \
+	foreign/tcpip/libtcpip.a
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -136,8 +140,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(TraCITestClient_SOURCES)
-DIST_SOURCES = $(TraCITestClient_SOURCES)
+SOURCES = $(TraCITestClient_SOURCES) $(tlc_SOURCES)
+DIST_SOURCES = $(TraCITestClient_SOURCES) $(tlc_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -303,6 +307,10 @@ TraCITestClient_SOURCES = tracitestclient_main.cpp TraCITestClient.cpp TraCITest
 TraCITestClient_LDADD = utils/common/libcommon.a \
 utils/traci/libtraci.a foreign/tcpip/libtcpip.a
 
+tlc_SOURCES = tlc_main.cpp tlc.cpp tlc.hpp
+tlc_LDADD = utils/common/libcommon.a \
+utils/traci/libtraci.a foreign/tcpip/libtcpip.a
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -400,6 +408,10 @@ TraCITestClient$(EXEEXT): $(TraCITestClient_OBJECTS) $(TraCITestClient_DEPENDENC
 	@rm -f TraCITestClient$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(TraCITestClient_OBJECTS) $(TraCITestClient_LDADD) $(LIBS)
 
+tlc$(EXEEXT): $(tlc_OBJECTS) $(tlc_DEPENDENCIES) $(EXTRA_tlc_DEPENDENCIES) 
+	@rm -f tlc$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(tlc_OBJECTS) $(tlc_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -407,6 +419,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TraCITestClient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tlc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tlc_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracitestclient_main.Po@am__quote@
 
 .cpp.o:
