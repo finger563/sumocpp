@@ -14,21 +14,21 @@
 
 #include <traci-server/TraCIConstants.h>
 #include <utils/common/SUMOTime.h>
-#include "tlc.hpp"
+#include "sumo_client.hpp"
 
-TLC::TLC(std::string outputFileName)
+SUMO_CLIENT::SUMO_CLIENT(std::string outputFileName)
   : outputFileName(outputFileName), answerLog("") {
   answerLog.setf(std::ios::fixed , std::ios::floatfield); // use decimal format
   answerLog.setf(std::ios::showpoint); // print decimal point
   answerLog << std::setprecision(2);
 }
 
-TLC::~TLC() {
+SUMO_CLIENT::~SUMO_CLIENT() {
   writeResult();
 }
 
 bool
-TLC::run(int port, std::string host) {
+SUMO_CLIENT::run(int port, std::string host) {
   
   std::stringstream msg;
 
@@ -53,7 +53,7 @@ TLC::run(int port, std::string host) {
 // ---------- Helper commands: scoped
 
 void
-TLC::getLastStepInductionLoopVehicleNumber(std::string ilID,
+SUMO_CLIENT::getLastStepInductionLoopVehicleNumber(std::string ilID,
 					   int& retVal)
 {
   commandGetVariable(CMD_GET_INDUCTIONLOOP_VARIABLE,
@@ -62,7 +62,7 @@ TLC::getLastStepInductionLoopVehicleNumber(std::string ilID,
 }
 
 void
-TLC::getLastStepInductionLoopVehicleIDs(std::string ilID,
+SUMO_CLIENT::getLastStepInductionLoopVehicleIDs(std::string ilID,
 					std::vector<std::string>& retVal)
 {
   commandGetVariable(CMD_GET_INDUCTIONLOOP_VARIABLE,
@@ -71,7 +71,7 @@ TLC::getLastStepInductionLoopVehicleIDs(std::string ilID,
 }
 
 void
-TLC::getRedYellowGreenState(std::string tlsID,
+SUMO_CLIENT::getRedYellowGreenState(std::string tlsID,
 			    int& retVal)
 {
   commandGetVariable(CMD_GET_TL_VARIABLE,
@@ -80,7 +80,7 @@ TLC::getRedYellowGreenState(std::string tlsID,
 }
 
 void
-TLC::setRedYellowGreenState(std::string tlsID,
+SUMO_CLIENT::setRedYellowGreenState(std::string tlsID,
 			    int state)
 {
   std::ifstream tmp;
@@ -91,7 +91,7 @@ TLC::setRedYellowGreenState(std::string tlsID,
 }
 
 void
-TLC::getMinExpectedNumber(int& retVal)
+SUMO_CLIENT::getMinExpectedNumber(int& retVal)
 {
   commandGetVariable(CMD_GET_SIM_VARIABLE,
 		     VAR_MIN_EXPECTED_VEHICLES,
@@ -99,7 +99,7 @@ TLC::getMinExpectedNumber(int& retVal)
 }
 
 void
-TLC::getArrivedNumber(int& retVal)
+SUMO_CLIENT::getArrivedNumber(int& retVal)
 {
   commandGetVariable(CMD_GET_SIM_VARIABLE,
 		     VAR_ARRIVED_VEHICLES_NUMBER,
@@ -107,7 +107,7 @@ TLC::getArrivedNumber(int& retVal)
 }
 
 void
-TLC::getArrivedIDList(std::vector<std::string>& retVal)
+SUMO_CLIENT::getArrivedIDList(std::vector<std::string>& retVal)
 {
   commandGetVariable(CMD_GET_SIM_VARIABLE,
 		     VAR_ARRIVED_VEHICLES_IDS,
@@ -116,7 +116,7 @@ TLC::getArrivedIDList(std::vector<std::string>& retVal)
 
 // ---------- Commands handling
 void
-TLC::commandSimulationStep(SUMOTime time) {
+SUMO_CLIENT::commandSimulationStep(SUMOTime time) {
   send_commandSimulationStep(time);
   answerLog << std::endl << "-> Command sent: <SimulationStep2>:" << std::endl;
   tcpip::Storage inMsg;
@@ -132,7 +132,7 @@ TLC::commandSimulationStep(SUMOTime time) {
 
 
 void
-TLC::commandClose() {
+SUMO_CLIENT::commandClose() {
   send_commandClose();
   answerLog << std::endl << "-> Command sent: <Close>:" << std::endl;
   try {
@@ -147,7 +147,7 @@ TLC::commandClose() {
 
 
 void
-TLC::commandGetVariable(int domID, int varID, const std::string& objID, tcpip::Storage* addData) {
+SUMO_CLIENT::commandGetVariable(int domID, int varID, const std::string& objID, tcpip::Storage* addData) {
   send_commandGetVariable(domID, varID, objID, addData);
   answerLog << std::endl << "-> Command sent: <GetVariable>:" << std::endl
 	    << "  domID=" << domID << " varID=" << varID
@@ -180,7 +180,7 @@ TLC::commandGetVariable(int domID, int varID, const std::string& objID, tcpip::S
 
 
 void
-TLC::commandSetValue(int domID, int varID, const std::string& objID, std::ifstream& defFile) {
+SUMO_CLIENT::commandSetValue(int domID, int varID, const std::string& objID, std::ifstream& defFile) {
   std::stringstream msg;
   tcpip::Storage inMsg, tmp;
   setValueTypeDependant(tmp, defFile, msg);
@@ -203,7 +203,7 @@ TLC::commandSetValue(int domID, int varID, const std::string& objID, std::ifstre
 
 
 void
-TLC::commandSubscribeObjectVariable(int domID, const std::string& objID, int beginTime, int endTime, int varNo, std::ifstream& defFile) {
+SUMO_CLIENT::commandSubscribeObjectVariable(int domID, const std::string& objID, int beginTime, int endTime, int varNo, std::ifstream& defFile) {
   std::vector<int> vars;
   for (int i = 0; i < varNo; ++i) {
     int var;
@@ -227,7 +227,7 @@ TLC::commandSubscribeObjectVariable(int domID, const std::string& objID, int beg
 
 
 void
-TLC::commandSubscribeContextVariable(int domID, const std::string& objID, int beginTime, int endTime,
+SUMO_CLIENT::commandSubscribeContextVariable(int domID, const std::string& objID, int beginTime, int endTime,
 				     int domain, SUMOReal range, int varNo, std::ifstream& defFile) {
   std::vector<int> vars;
   for (int i = 0; i < varNo; ++i) {
@@ -254,7 +254,7 @@ TLC::commandSubscribeContextVariable(int domID, const std::string& objID, int be
 
 // ---------- Report helper
 void
-TLC::writeResult() {
+SUMO_CLIENT::writeResult() {
   time_t seconds;
   tm* locTime;
   std::ofstream outFile(outputFileName.c_str());
@@ -263,20 +263,20 @@ TLC::writeResult() {
   }
   time(&seconds);
   locTime = localtime(&seconds);
-  outFile << "TLC output file. Date: " << asctime(locTime) << std::endl;
+  outFile << "SUMO_CLIENT output file. Date: " << asctime(locTime) << std::endl;
   outFile << answerLog.str();
   outFile.close();
 }
 
 
 void
-TLC::errorMsg(std::stringstream& msg) {
+SUMO_CLIENT::errorMsg(std::stringstream& msg) {
   std::cerr << msg.str() << std::endl;
   answerLog << "----" << std::endl << msg.str() << std::endl;
 }
 
 bool
-TLC::validateSimulationStep2(tcpip::Storage& inMsg) {
+SUMO_CLIENT::validateSimulationStep2(tcpip::Storage& inMsg) {
   try {
     int noSubscriptions = inMsg.readInt();
     for (int s = 0; s < noSubscriptions; ++s) {
@@ -293,7 +293,7 @@ TLC::validateSimulationStep2(tcpip::Storage& inMsg) {
 
 
 bool
-TLC::validateSubscription(tcpip::Storage& inMsg) {
+SUMO_CLIENT::validateSubscription(tcpip::Storage& inMsg) {
   try {
     int length = inMsg.readUnsignedByte();
     if (length == 0) {
@@ -345,7 +345,7 @@ TLC::validateSubscription(tcpip::Storage& inMsg) {
 
 // ---------- Conversion helper
 int
-TLC::setValueTypeDependant(tcpip::Storage& into, std::ifstream& defFile, std::stringstream& msg) {
+SUMO_CLIENT::setValueTypeDependant(tcpip::Storage& into, std::ifstream& defFile, std::stringstream& msg) {
   std::string dataTypeS;
   defFile >> dataTypeS;
   if (dataTypeS == "<airDist>") {
@@ -481,7 +481,7 @@ TLC::setValueTypeDependant(tcpip::Storage& into, std::ifstream& defFile, std::st
 
 
 void
-TLC::readAndReportTypeDependent(tcpip::Storage& inMsg, int valueDataType) {
+SUMO_CLIENT::readAndReportTypeDependent(tcpip::Storage& inMsg, int valueDataType) {
   if (valueDataType == TYPE_UBYTE) {
     int ubyte = inMsg.readUnsignedByte();
     answerLog << " Unsigned Byte Value: " << ubyte << std::endl;

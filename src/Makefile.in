@@ -95,7 +95,7 @@ am_TraCITestClient_OBJECTS = tracitestclient_main.$(OBJEXT) \
 TraCITestClient_OBJECTS = $(am_TraCITestClient_OBJECTS)
 TraCITestClient_DEPENDENCIES = utils/common/libcommon.a \
 	utils/traci/libtraci.a foreign/tcpip/libtcpip.a
-am_tlc_OBJECTS = tlc_main.$(OBJEXT) tlc.$(OBJEXT)
+am_tlc_OBJECTS = tlc_main.$(OBJEXT) sumo_client.$(OBJEXT)
 tlc_OBJECTS = $(am_tlc_OBJECTS)
 tlc_DEPENDENCIES = utils/common/libcommon.a utils/traci/libtraci.a \
 	foreign/tcpip/libtcpip.a
@@ -307,7 +307,7 @@ TraCITestClient_SOURCES = tracitestclient_main.cpp TraCITestClient.cpp TraCITest
 TraCITestClient_LDADD = utils/common/libcommon.a \
 utils/traci/libtraci.a foreign/tcpip/libtcpip.a
 
-tlc_SOURCES = tlc_main.cpp tlc.cpp tlc.hpp
+tlc_SOURCES = tlc_main.cpp sumo_client.cpp sumo_client.hpp
 tlc_LDADD = utils/common/libcommon.a \
 utils/traci/libtraci.a foreign/tcpip/libtcpip.a
 
@@ -419,7 +419,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TraCITestClient.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tlc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sumo_client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tlc_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracitestclient_main.Po@am__quote@
 

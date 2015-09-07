@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include "tlc.hpp"
+#include "sumo_client.hpp"
 
 
 int main(int argc, char* argv[]) {
@@ -39,6 +39,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    TLC tlc_client(outFileName);
-    return !tlc_client.run(port, host);
+    SUMO_CLIENT client(outFileName);
+    return !client.run(port, host);
 }

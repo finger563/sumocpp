@@ -1,5 +1,5 @@
-#ifndef PORTED_TLC_HPP
-#define PORTED_TLC_HPP
+#ifndef SUMO_CLIENT_HPP
+#define SUMO_CLIENT_HPP
 
 #include <string>
 #include <sstream>
@@ -9,10 +9,10 @@
 #include <utils/common/SUMOTime.h>
 #include <utils/traci/TraCIAPI.h>
 
-class TLC : public TraCIAPI {
+class SUMO_CLIENT : public TraCIAPI {
 public:
-  TLC(std::string outputFileName = "tlc.out");
-  ~TLC();
+  SUMO_CLIENT(std::string outputFileName = "tlc.out");
+  ~SUMO_CLIENT();
   bool run(int port, std::string host = "localhost");
 
   void getLastStepInductionLoopVehicleNumber(std::string ilID,
