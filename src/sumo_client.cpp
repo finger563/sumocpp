@@ -28,8 +28,8 @@ SUMO_CLIENT::~SUMO_CLIENT() {
 }
 
 bool
-SUMO_CLIENT::run(int port, std::string host) {
-  
+SUMO_CLIENT::create_connection(int port, std::string host)
+{
   std::stringstream msg;
 
   // try to connect
@@ -41,13 +41,14 @@ SUMO_CLIENT::run(int port, std::string host) {
     errorMsg(msg);
     return false;
   }
+  return true;
+}
 
-  // CHANGE THIS TO RUN THE TRAFFIC LIGHT CONTROLLER CODE
-
-  // FIGURE OUT WHEN TO CLOSE HERE (FROM HIS PYTHON CODE)
+void
+SUMO_CLIENT::close_connection()
+{
   commandClose();
   close();
-  return true;
 }
 
 // ---------- Helper commands: scoped

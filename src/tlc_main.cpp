@@ -40,5 +40,7 @@ int main(int argc, char* argv[]) {
     }
 
     SUMO_CLIENT client(outFileName);
-    return !client.run(port, host);
+    client.create_connection(port,host);
+    client.close_connection();
+    return 0;
 }

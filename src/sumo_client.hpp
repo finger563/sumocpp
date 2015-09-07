@@ -13,7 +13,9 @@ class SUMO_CLIENT : public TraCIAPI {
 public:
   SUMO_CLIENT(std::string outputFileName = "tlc.out");
   ~SUMO_CLIENT();
-  bool run(int port, std::string host = "localhost");
+
+  bool create_connection(int port, std::string host = "localhost");
+  void close_connection();
 
   void getLastStepInductionLoopVehicleNumber(std::string ilID,
 					     int& retVal);
