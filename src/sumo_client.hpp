@@ -34,8 +34,15 @@ public:
 protected:
   void commandSimulationStep(SUMOTime time);
   void commandClose();
-  void commandGetVariable(int domID, int varID, const std::string& objID, tcpip::Storage* addData = 0);
-  void commandSetValue(int domID, int varID, const std::string& objID, std::ifstream& defFile);
+
+  tcpip::Storage commandGetVariable(int domID,
+				    int varID,
+				    const std::string& objID,
+				    tcpip::Storage* addData = 0);
+  void commandSetValue(int domID,
+		       int varID,
+		       const std::string& objID,
+		       std::ifstream& defFile);
   void commandSubscribeObjectVariable(int domID,
 				      const std::string& objID,
 				      int beginTime,

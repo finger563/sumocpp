@@ -57,32 +57,68 @@ void
 SUMO_CLIENT::getLastStepInductionLoopVehicleNumber(std::string ilID,
 					   int& retVal)
 {
-  commandGetVariable(CMD_GET_INDUCTIONLOOP_VARIABLE,
-		     LAST_STEP_VEHICLE_NUMBER,
-		     ilID);
+  retVal = -1;
+  tcpip::Storage inMsg = commandGetVariable(CMD_GET_INDUCTIONLOOP_VARIABLE,
+					     LAST_STEP_VEHICLE_NUMBER,
+					     ilID);
+  try {
+    int variableID = inMsg.readUnsignedByte();
+    std::string objectID = inMsg.readString();
+    int valueDataType = inMsg.readUnsignedByte();
+    retVal = inMsg.readInt();  // get the return value here
+  } catch (tcpip::SocketException& e) {
+    std::stringstream msg;
+    msg << "Error while receiving command: " << e.what();
+    errorMsg(msg);
+    return;
+  }
 }
 
 void
 SUMO_CLIENT::getLastStepInductionLoopVehicleIDs(std::string ilID,
-					std::vector<std::string>& retVal)
+						std::vector<std::string>& retVal)
 {
-  commandGetVariable(CMD_GET_INDUCTIONLOOP_VARIABLE,
-		     LAST_STEP_VEHICLE_ID_LIST,
-		     ilID);
+  tcpip::Storage inMsg = commandGetVariable(CMD_GET_INDUCTIONLOOP_VARIABLE,
+					    LAST_STEP_VEHICLE_ID_LIST,
+					    ilID);
+  try {
+    int variableID = inMsg.readUnsignedByte();
+    std::string objectID = inMsg.readString();
+    int valueDataType = inMsg.readUnsignedByte();
+    retVal = inMsg.readStringList();  // get the return value here
+  } catch (tcpip::SocketException& e) {
+    std::stringstream msg;
+    msg << "Error while receiving command: " << e.what();
+    errorMsg(msg);
+    return;
+  }
 }
 
 void
 SUMO_CLIENT::getRedYellowGreenState(std::string tlsID,
-			    int& retVal)
+				    int& retVal)
 {
-  commandGetVariable(CMD_GET_TL_VARIABLE,
-		     TL_RED_YELLOW_GREEN_STATE,
-		     tlsID);
+  tcpip::Storage inMsg = commandGetVariable(CMD_GET_TL_VARIABLE,
+					    TL_RED_YELLOW_GREEN_STATE,
+					    tlsID);
+  try {
+    int variableID = inMsg.readUnsignedByte();
+    std::string objectID = inMsg.readString();
+    int valueDataType = inMsg.readUnsignedByte();
+    std::string pred = inMsg.readString();
+    std::string succ = inMsg.readString();
+    retVal = inMsg.readUnsignedByte();  // get the return value here
+  } catch (tcpip::SocketException& e) {
+    std::stringstream msg;
+    msg << "Error while receiving command: " << e.what();
+    errorMsg(msg);
+    return;
+  }
 }
 
 void
 SUMO_CLIENT::setRedYellowGreenState(std::string tlsID,
-			    int state)
+				    int state)
 {
   std::ifstream tmp;
   commandSetValue(CMD_SET_TL_VARIABLE,
@@ -94,25 +130,58 @@ SUMO_CLIENT::setRedYellowGreenState(std::string tlsID,
 void
 SUMO_CLIENT::getMinExpectedNumber(int& retVal)
 {
-  commandGetVariable(CMD_GET_SIM_VARIABLE,
-		     VAR_MIN_EXPECTED_VEHICLES,
-		     "");
+  tcpip::Storage inMsg = commandGetVariable(CMD_GET_SIM_VARIABLE,
+					    VAR_MIN_EXPECTED_VEHICLES,
+					    "");
+  try {
+    int variableID = inMsg.readUnsignedByte();
+    std::string objectID = inMsg.readString();
+    int valueDataType = inMsg.readUnsignedByte();
+    retVal = inMsg.readInt();  // get the return value here
+  } catch (tcpip::SocketException& e) {
+    std::stringstream msg;
+    msg << "Error while receiving command: " << e.what();
+    errorMsg(msg);
+    return;
+  }
 }
 
 void
 SUMO_CLIENT::getArrivedNumber(int& retVal)
 {
-  commandGetVariable(CMD_GET_SIM_VARIABLE,
-		     VAR_ARRIVED_VEHICLES_NUMBER,
-		     "");
+  tcpip::Storage inMsg = commandGetVariable(CMD_GET_SIM_VARIABLE,
+					    VAR_ARRIVED_VEHICLES_NUMBER,
+					    "");
+  try {
+    int variableID = inMsg.readUnsignedByte();
+    std::string objectID = inMsg.readString();
+    int valueDataType = inMsg.readUnsignedByte();
+    retVal = inMsg.readInt();  // get the return value here
+  } catch (tcpip::SocketException& e) {
+    std::stringstream msg;
+    msg << "Error while receiving command: " << e.what();
+    errorMsg(msg);
+    return;
+  }
 }
 
 void
 SUMO_CLIENT::getArrivedIDList(std::vector<std::string>& retVal)
 {
-  commandGetVariable(CMD_GET_SIM_VARIABLE,
-		     VAR_ARRIVED_VEHICLES_IDS,
-		     "");
+  tcpip::Storage inMsg = commandGetVariable(CMD_GET_SIM_VARIABLE,
+					    VAR_ARRIVED_VEHICLES_IDS,
+					    "");
+  try {
+    int variableID = inMsg.readUnsignedByte();
+    std::string objectID = inMsg.readString();
+    int valueDataType = inMsg.readUnsignedByte();
+    retVal = inMsg.readStringList();  // get the return value here
+  } catch (tcpip::SocketException& e) {
+    std::stringstream msg;
+    msg << "Error while receiving command: " << e.what();
+    errorMsg(msg);
+    return;
+  }
 }
 
 // ---------- Commands handling
@@ -147,7 +216,7 @@ SUMO_CLIENT::commandClose() {
 }
 
 
-void
+tcpip::Storage
 SUMO_CLIENT::commandGetVariable(int domID, int varID, const std::string& objID, tcpip::Storage* addData) {
   send_commandGetVariable(domID, varID, objID, addData);
   answerLog << std::endl << "-> Command sent: <GetVariable>:" << std::endl
@@ -160,23 +229,10 @@ SUMO_CLIENT::commandGetVariable(int domID, int varID, const std::string& objID, 
     answerLog << acknowledgement << std::endl;
   } catch (tcpip::SocketException& e) {
     answerLog << e.what() << std::endl;
-    return;
+    return inMsg;
   }
   check_commandGetResult(inMsg, domID, -1, false);
-  // report result state
-  try {
-    int variableID = inMsg.readUnsignedByte();
-    std::string objectID = inMsg.readString();
-    answerLog <<  "  CommandID=" << (domID + 0x10) << "  VariableID=" << variableID << "  ObjectID=" << objectID;
-    int valueDataType = inMsg.readUnsignedByte();
-    answerLog << " valueDataType=" << valueDataType;
-    readAndReportTypeDependent(inMsg, valueDataType);
-  } catch (tcpip::SocketException& e) {
-    std::stringstream msg;
-    msg << "Error while receiving command: " << e.what();
-    errorMsg(msg);
-    return;
-  }
+  return inMsg;
 }
 
 
