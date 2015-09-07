@@ -379,7 +379,6 @@ int main(int argc, char* argv[]) {
     while (minExpectedNumber > 0)
       {
 	client.commandSimulationStep(0);
-	client.getMinExpectedNumber(minExpectedNumber);
 
         //The first controller IK ~~~~~~~~~~~~~~~~~~~~~~~~
         //First we compute the queue length of West-East direction
@@ -484,6 +483,7 @@ int main(int argc, char* argv[]) {
 	      }
 	  }
         step += 1;
+	client.getMinExpectedNumber(minExpectedNumber);
       }
     float average_car_latency = 1.0 * float(car_latency) / float(car_number);
     float average_truck_latency = 1.0 * float(truck_latency) / float(truck_number);
