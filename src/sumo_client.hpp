@@ -23,9 +23,9 @@ public:
 					  std::vector<std::string>& retVal);
 
   void getRedYellowGreenState(std::string tlsID,
-			      int& retVal);
+			      std::string& retVal);
   void setRedYellowGreenState(std::string tlsID, 
-			      int state);
+			      std::string& state);
 
   void getMinExpectedNumber(int& retVal);
   void getArrivedNumber(int& retVal);
@@ -42,7 +42,7 @@ protected:
   void commandSetValue(int domID,
 		       int varID,
 		       const std::string& objID,
-		       std::ifstream& defFile);
+		       tcpip::Storage& value);
   void commandSubscribeObjectVariable(int domID,
 				      const std::string& objID,
 				      int beginTime,

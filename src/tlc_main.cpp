@@ -41,6 +41,9 @@ int main(int argc, char* argv[]) {
 
     SUMO_CLIENT client(outFileName);
     client.create_connection(port,host);
+
+    // IMPLEMENT TRAFFIC LIGHT CONTROLLER HERE
+    
     client.close_connection();
     return 0;
 }

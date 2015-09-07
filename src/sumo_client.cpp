@@ -96,7 +96,7 @@ SUMO_CLIENT::getLastStepInductionLoopVehicleIDs(std::string ilID,
 
 void
 SUMO_CLIENT::getRedYellowGreenState(std::string tlsID,
-				    int& retVal)
+				    std::string& retVal)
 {
   tcpip::Storage inMsg = commandGetVariable(CMD_GET_TL_VARIABLE,
 					    TL_RED_YELLOW_GREEN_STATE,
@@ -105,9 +105,7 @@ SUMO_CLIENT::getRedYellowGreenState(std::string tlsID,
     int variableID = inMsg.readUnsignedByte();
     std::string objectID = inMsg.readString();
     int valueDataType = inMsg.readUnsignedByte();
-    std::string pred = inMsg.readString();
-    std::string succ = inMsg.readString();
-    retVal = inMsg.readUnsignedByte();  // get the return value here
+    retVal = inMsg.readString();  // get the return value here
   } catch (tcpip::SocketException& e) {
     std::stringstream msg;
     msg << "Error while receiving command: " << e.what();
@@ -118,13 +116,15 @@ SUMO_CLIENT::getRedYellowGreenState(std::string tlsID,
 
 void
 SUMO_CLIENT::setRedYellowGreenState(std::string tlsID,
-				    int state)
+				    std::string& state)
 {
-  std::ifstream tmp;
+  tcpip::Storage value;
+  value.writeUnsignedByte(TYPE_STRING);
+  value.writeString(state);
   commandSetValue(CMD_SET_TL_VARIABLE,
 		  TL_RED_YELLOW_GREEN_STATE,
 		  tlsID,
-		  tmp);
+		  value);
 }
 
 void
@@ -237,18 +237,12 @@ SUMO_CLIENT::commandGetVariable(int domID, int varID, const std::string& objID, 
 
 
 void
-SUMO_CLIENT::commandSetValue(int domID, int varID, const std::string& objID, std::ifstream& defFile) {
-  std::stringstream msg;
-  tcpip::Storage inMsg, tmp;
-  setValueTypeDependant(tmp, defFile, msg);
-  std::string msgS = msg.str();
-  if (msgS != "") {
-    errorMsg(msg);
-  }
-  send_commandSetValue(domID, varID, objID, tmp);
+SUMO_CLIENT::commandSetValue(int domID, int varID, const std::string& objID, tcpip::Storage& value) {
+  send_commandSetValue(domID, varID, objID, value);
   answerLog << std::endl << "-> Command sent: <SetValue>:" << std::endl
 	    << "  domID=" << domID << " varID=" << varID
 	    << " objID=" << objID << std::endl;
+  tcpip::Storage inMsg;
   try {
     std::string acknowledgement;
     check_resultState(inMsg, domID, false, &acknowledgement);
