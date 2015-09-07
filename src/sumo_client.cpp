@@ -115,8 +115,8 @@ SUMO_CLIENT::getRedYellowGreenState(std::string tlsID,
 }
 
 void
-SUMO_CLIENT::setRedYellowGreenState(std::string tlsID,
-				    std::string& state)
+SUMO_CLIENT::setRedYellowGreenState(std::string& tlsID,
+				    const std::string& state)
 {
   tcpip::Storage value;
   value.writeUnsignedByte(TYPE_STRING);

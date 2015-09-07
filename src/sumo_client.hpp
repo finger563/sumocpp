@@ -17,6 +17,8 @@ public:
   bool create_connection(int port, std::string host = "localhost");
   void close_connection();
 
+  void commandSimulationStep(SUMOTime time);
+
   void getLastStepInductionLoopVehicleNumber(std::string ilID,
 					     int& retVal);
   void getLastStepInductionLoopVehicleIDs(std::string ilID, 
@@ -24,15 +26,14 @@ public:
 
   void getRedYellowGreenState(std::string tlsID,
 			      std::string& retVal);
-  void setRedYellowGreenState(std::string tlsID, 
-			      std::string& state);
+  void setRedYellowGreenState(std::string& tlsID, 
+			      const std::string& state);
 
   void getMinExpectedNumber(int& retVal);
   void getArrivedNumber(int& retVal);
   void getArrivedIDList(std::vector<std::string>& retVal);
 
 protected:
-  void commandSimulationStep(SUMOTime time);
   void commandClose();
 
   tcpip::Storage commandGetVariable(int domID,
