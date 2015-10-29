@@ -19,20 +19,6 @@ public:
 
   void commandSimulationStep(SUMOTime time);
 
-  void getLastStepInductionLoopVehicleNumber(std::string ilID,
-					     int& retVal);
-  void getLastStepInductionLoopVehicleIDs(std::string ilID, 
-					  std::vector<std::string>& retVal);
-
-  void getRedYellowGreenState(std::string tlsID,
-			      std::string& retVal);
-  void setRedYellowGreenState(std::string& tlsID, 
-			      const std::string& state);
-
-  void getMinExpectedNumber(int& retVal);
-  void getArrivedNumber(int& retVal);
-  void getArrivedIDList(std::vector<std::string>& retVal);
-
 protected:
   void commandClose();
 

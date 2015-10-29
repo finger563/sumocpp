@@ -92,7 +92,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_TraCITestClient_OBJECTS = tracitestclient_main.$(OBJEXT) \
-	TraCITestClient.$(OBJEXT)
+	sumo_client.$(OBJEXT)
 TraCITestClient_OBJECTS = $(am_TraCITestClient_OBJECTS)
 TraCITestClient_DEPENDENCIES = utils/common/libcommon.a \
 	utils/traci/libtraci.a foreign/tcpip/libtcpip.a
@@ -310,7 +310,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = utils foreign
-TraCITestClient_SOURCES = tracitestclient_main.cpp TraCITestClient.cpp TraCITestClient.h
+TraCITestClient_SOURCES = tracitestclient_main.cpp sumo_client.cpp sumo_client.hpp
 TraCITestClient_LDADD = utils/common/libcommon.a \
 utils/traci/libtraci.a foreign/tcpip/libtcpip.a
 
@@ -433,7 +433,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TraCITestClient.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sim_stepper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sumo_client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tlc_main.Po@am__quote@

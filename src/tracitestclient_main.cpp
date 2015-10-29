@@ -34,7 +34,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-#include "TraCITestClient.h"
+#include "sumo_client.hpp"
 
 
 // ===========================================================================
@@ -80,7 +80,4 @@ int main(int argc, char* argv[]) {
         std::cout << "Missing definition file" << std::endl;
         return 1;
     }
-
-    TraCITestClient client(outFileName);
-    return !client.run(defFile, port, host);
 }

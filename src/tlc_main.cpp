@@ -58,14 +58,12 @@ void vehicle_number(std::string sensor1,
 		    int& sum_sensor2,
 		    int& queue_length)
 {
-  int numVehicles = 0;
-  client.getLastStepInductionLoopVehicleNumber(sensor1, numVehicles);
+  int numVehicles = client.inductionloop.getLastStepVehicleNumber(sensor1);
   if (numVehicles == 0)
     id_T1="";
   else
     {
-      std::vector<std::string> list_T1;
-      client.getLastStepInductionLoopVehicleIDs(sensor1, list_T1);
+      std::vector<std::string> list_T1 = client.inductionloop.getLastStepVehicleIDs(sensor1);
       for ( std::vector<std::string>::iterator it = list_T1.begin(); it != list_T1.end(); ++it)
 	{
 	  if ( *it != id_T1 )
@@ -75,13 +73,12 @@ void vehicle_number(std::string sensor1,
 	    }
 	}
     }
-  client.getLastStepInductionLoopVehicleNumber(sensor2, numVehicles);
+  numVehicles = client.inductionloop.getLastStepVehicleNumber(sensor2);
   if (numVehicles == 0)
     id_S1="";
   else
     {
-      std::vector<std::string> list_S1;
-      client.getLastStepInductionLoopVehicleIDs(sensor2, list_S1);
+      std::vector<std::string> list_S1 = client.inductionloop.getLastStepVehicleIDs(sensor2);
       for ( std::vector<std::string>::iterator it = list_S1.begin(); it != list_S1.end(); ++it)
 	{
 	  if ( *it != id_S1 )
@@ -99,7 +96,7 @@ void clock_value(std::string intersection,
 		 int& clock_NS,
 		 std::string& tl_state)
 {
-  client.getRedYellowGreenState(intersection, tl_state);
+  tl_state = client.trafficlights.getRedYellowGreenState(intersection);
   if (!tl_state.compare(NSGREEN))
     {
       clock_NS = clock_NS + 1;
@@ -117,7 +114,7 @@ void clock_value1(std::string intersection,
 		  int& clock_NS,
 		  std::string& tl_state)
 {
-  client.getRedYellowGreenState(intersection, tl_state);
+  tl_state = client.trafficlights.getRedYellowGreenState(intersection);
   if (!tl_state.compare(NSGREEN1))
     {
       clock_NS = clock_NS + 1;
@@ -145,12 +142,12 @@ void controller(std::string intersection,
     {
       if ( !tl_state.compare(WEGREEN) && clock_WE > Light_Max )
 	{
-	  client.setRedYellowGreenState(intersection, NSGREEN);
+	  client.trafficlights.setRedYellowGreenState(intersection, NSGREEN);
 	  clock_WE = 0;
 	}
       if ( !tl_state.compare(NSGREEN) && clock_NS > Light_Max )
 	{
-	  client.setRedYellowGreenState(intersection, WEGREEN);
+	  client.trafficlights.setRedYellowGreenState(intersection, WEGREEN);
 	  clock_NS = 0;
 	}
     }
@@ -158,12 +155,12 @@ void controller(std::string intersection,
     {
       if ( !tl_state.compare(NSGREEN) && clock_NS > Light_Min )
 	{
-	  client.setRedYellowGreenState(intersection, WEGREEN);
+	  client.trafficlights.setRedYellowGreenState(intersection, WEGREEN);
 	  clock_NS = 0;
 	}
       if ( !tl_state.compare(WEGREEN) && clock_WE > Light_Max )
 	{
-	  client.setRedYellowGreenState(intersection, NSGREEN);
+	  client.trafficlights.setRedYellowGreenState(intersection, NSGREEN);
 	  clock_WE = 0;
 	}
     }
@@ -171,12 +168,12 @@ void controller(std::string intersection,
     {
       if ( !tl_state.compare(WEGREEN) && clock_WE > Light_Min )
 	{
-	  client.setRedYellowGreenState(intersection, NSGREEN);
+	  client.trafficlights.setRedYellowGreenState(intersection, NSGREEN);
 	  clock_WE = 0;
 	}
       if ( !tl_state.compare(NSGREEN) && clock_NS > Light_Max )
 	{
-	  client.setRedYellowGreenState(intersection, WEGREEN);
+	  client.trafficlights.setRedYellowGreenState(intersection, WEGREEN);
 	  clock_NS = 0;
 	}
     }
@@ -197,12 +194,12 @@ void controller1(std::string intersection,
     {
       if ( !tl_state.compare(WEGREEN1) && clock_WE > Light_Max )
 	{
-	  client.setRedYellowGreenState(intersection, NSGREEN1);
+	  client.trafficlights.setRedYellowGreenState(intersection, NSGREEN1);
 	  clock_WE = 0;
 	}
       if ( !tl_state.compare(NSGREEN1) && clock_NS > Light_Max )
 	{
-	  client.setRedYellowGreenState(intersection, WEGREEN1);
+	  client.trafficlights.setRedYellowGreenState(intersection, WEGREEN1);
 	  clock_NS = 0;
 	}
     }
@@ -210,12 +207,12 @@ void controller1(std::string intersection,
     {
       if ( !tl_state.compare(NSGREEN1) && clock_NS > Light_Min )
 	{
-	  client.setRedYellowGreenState(intersection, WEGREEN1);
+	  client.trafficlights.setRedYellowGreenState(intersection, WEGREEN1);
 	  clock_NS = 0;
 	}
       if ( !tl_state.compare(WEGREEN1) && clock_WE > Light_Max )
 	{
-	  client.setRedYellowGreenState(intersection, NSGREEN1);
+	  client.trafficlights.setRedYellowGreenState(intersection, NSGREEN1);
 	  clock_WE = 0;
 	}
     }
@@ -223,12 +220,12 @@ void controller1(std::string intersection,
     {
       if ( !tl_state.compare(WEGREEN1) && clock_WE > Light_Min )
 	{
-	  client.setRedYellowGreenState(intersection, NSGREEN1);
+	  client.trafficlights.setRedYellowGreenState(intersection, NSGREEN1);
 	  clock_WE = 0;
 	}
       if ( !tl_state.compare(NSGREEN1) && clock_NS > Light_Max )
 	{
-	  client.setRedYellowGreenState(intersection, WEGREEN1);
+	  client.trafficlights.setRedYellowGreenState(intersection, WEGREEN1);
 	  clock_NS = 0;
 	}
     }
@@ -376,8 +373,7 @@ int main(int argc, char* argv[]) {
     int truck_number=0;
     int truck_latency=0;
 
-    int minExpectedNumber;
-    client.getMinExpectedNumber(minExpectedNumber);
+    int minExpectedNumber = client.simulation.getMinExpectedNumber();
     while (minExpectedNumber > 0)
       {
         //The first controller IK ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -461,12 +457,10 @@ int main(int argc, char* argv[]) {
         controller1 ("AC", tl_state_IK, queue_A_AC, queue_E_AC, clock_A_AC, clock_E_AC,
 		     Light_Min_AC, Light_Max_AC, s_WE_AC, s_NS_AC );
 
-	int total_number = 0;
-        client.getArrivedNumber(total_number);
+	int total_number = client.simulation.getArrivedNumber();
         if (total_number>=1)
 	  {
-	    std::vector<std::string> current_list;
-            client.getArrivedIDList(current_list);
+	    std::vector<std::string> current_list = client.simulation.getArrivedIDList();
 	    for (std::vector<std::string>::iterator it = current_list.begin(); it != current_list.end(); ++it)
 	      {
 		std::string v_id = it->substr(0,8);
@@ -483,7 +477,7 @@ int main(int argc, char* argv[]) {
 	      }
 	  }
         step += 1;
-	client.getMinExpectedNumber(minExpectedNumber);
+	minExpectedNumber = client.simulation.getMinExpectedNumber();
 	usleep(sleep_us);
       }
     float average_car_latency = 1.0 * float(car_latency) / float(car_number);
