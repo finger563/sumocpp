@@ -238,7 +238,7 @@ int main(int argc, char* argv[]) {
 
     if (argc < 5) {
         std::cout << "Usage: tlc -p <remote port> -s <sleep time in us>"
-                  << "[-h <remote host>]" << std::endl;
+                  << " [-h <remote host>]" << std::endl;
         return 0;
     }
 
@@ -374,7 +374,7 @@ int main(int argc, char* argv[]) {
     int truck_latency=0;
 
     int minExpectedNumber = client.simulation.getMinExpectedNumber();
-    while (minExpectedNumber > 0)
+    while (true)
       {
         //The first controller IK ~~~~~~~~~~~~~~~~~~~~~~~~
         //First we compute the queue length of West-East direction
@@ -382,6 +382,7 @@ int main(int argc, char* argv[]) {
         vehicle_number( "V1", "U1", id_V1, id_U1, sum1_I_IK_0, sum2_I_IK_0, queue_I_IK_0 );
         vehicle_number( "V2", "U2", id_V2, id_U2, sum1_I_IK_1, sum2_I_IK_1, queue_I_IK_1 );
         queue_I_IK = queue_I_IK_0 + queue_I_IK_1;
+	std::cout << "EW Q len: " << queue_I_IK << std::endl;
         //Then we compute the length in North-South direction
         vehicle_number( "T1", "S1", id_T1, id_S1, sum1_K_IK, sum2_K_IK, queue_K_IK );
         //Now we compute the clock value of the traffic lights(value k in the paper)

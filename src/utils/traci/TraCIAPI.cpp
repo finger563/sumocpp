@@ -264,6 +264,8 @@ TraCIAPI::check_commandGetResult(tcpip::Storage& inMsg, int command, int expecte
         throw tcpip::SocketException("#Error: received response with command id: " + toString(cmdId) + "but expected: " + toString(command + 0x10));
     }
     int test = inMsg.readUnsignedByte();
+    std::cout << "CMD ID: " << cmdId << std::endl;
+    std::cout << "test: " << test << std::endl;
     /*
     if (expectedType >= 0) {
         int valueDataType = inMsg.readUnsignedByte();
