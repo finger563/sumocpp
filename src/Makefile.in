@@ -76,7 +76,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = TraCITestClient$(EXEEXT) tlc$(EXEEXT)
+bin_PROGRAMS = TraCITestClient$(EXEEXT) tlc$(EXEEXT) \
+	sim_stepper$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/config.h.in $(top_srcdir)/depcomp
@@ -94,6 +95,10 @@ am_TraCITestClient_OBJECTS = tracitestclient_main.$(OBJEXT) \
 	TraCITestClient.$(OBJEXT)
 TraCITestClient_OBJECTS = $(am_TraCITestClient_OBJECTS)
 TraCITestClient_DEPENDENCIES = utils/common/libcommon.a \
+	utils/traci/libtraci.a foreign/tcpip/libtcpip.a
+am_sim_stepper_OBJECTS = sim_stepper.$(OBJEXT) sumo_client.$(OBJEXT)
+sim_stepper_OBJECTS = $(am_sim_stepper_OBJECTS)
+sim_stepper_DEPENDENCIES = utils/common/libcommon.a \
 	utils/traci/libtraci.a foreign/tcpip/libtcpip.a
 am_tlc_OBJECTS = tlc_main.$(OBJEXT) sumo_client.$(OBJEXT)
 tlc_OBJECTS = $(am_tlc_OBJECTS)
@@ -140,8 +145,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(TraCITestClient_SOURCES) $(tlc_SOURCES)
-DIST_SOURCES = $(TraCITestClient_SOURCES) $(tlc_SOURCES)
+SOURCES = $(TraCITestClient_SOURCES) $(sim_stepper_SOURCES) \
+	$(tlc_SOURCES)
+DIST_SOURCES = $(TraCITestClient_SOURCES) $(sim_stepper_SOURCES) \
+	$(tlc_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -311,6 +318,10 @@ tlc_SOURCES = tlc_main.cpp sumo_client.cpp sumo_client.hpp
 tlc_LDADD = utils/common/libcommon.a \
 utils/traci/libtraci.a foreign/tcpip/libtcpip.a
 
+sim_stepper_SOURCES = sim_stepper.cpp sumo_client.cpp sumo_client.hpp
+sim_stepper_LDADD = utils/common/libcommon.a \
+utils/traci/libtraci.a foreign/tcpip/libtcpip.a
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -408,6 +419,10 @@ TraCITestClient$(EXEEXT): $(TraCITestClient_OBJECTS) $(TraCITestClient_DEPENDENC
 	@rm -f TraCITestClient$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(TraCITestClient_OBJECTS) $(TraCITestClient_LDADD) $(LIBS)
 
+sim_stepper$(EXEEXT): $(sim_stepper_OBJECTS) $(sim_stepper_DEPENDENCIES) $(EXTRA_sim_stepper_DEPENDENCIES) 
+	@rm -f sim_stepper$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(sim_stepper_OBJECTS) $(sim_stepper_LDADD) $(LIBS)
+
 tlc$(EXEEXT): $(tlc_OBJECTS) $(tlc_DEPENDENCIES) $(EXTRA_tlc_DEPENDENCIES) 
 	@rm -f tlc$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tlc_OBJECTS) $(tlc_LDADD) $(LIBS)
@@ -419,6 +434,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TraCITestClient.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sim_stepper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sumo_client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tlc_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tracitestclient_main.Po@am__quote@

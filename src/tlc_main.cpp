@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include "sumo_client.hpp"
 
+#include <unistd.h>
+
 SUMO_CLIENT client;
 
 const std::string NSGREEN = "Grr";
@@ -233,23 +235,23 @@ void controller1(std::string intersection,
 }
 
 int main(int argc, char* argv[]) {
-    std::string outFileName = "testclient_out.txt";
     int port = -1;
     std::string host = "localhost";
+    int sleep_us = -1;
 
-    if (argc < 1) {
-        std::cout << "Usage: tlc -p <remote port>"
-                  << "[-h <remote host>] [-o <outputfile name>]" << std::endl;
+    if (argc < 5) {
+        std::cout << "Usage: tlc -p <remote port> -s <sleep time in us>"
+                  << "[-h <remote host>]" << std::endl;
         return 0;
     }
 
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
-	if (arg.compare("-o") == 0) {
-            outFileName = argv[i + 1];
-            i++;
-        } else if (arg.compare("-p") == 0) {
+	if (arg.compare("-p") == 0) {
             port = atoi(argv[i + 1]);
+            i++;
+	} else if (arg.compare("-s") == 0) {
+            sleep_us = atoi(argv[i + 1]);
             i++;
         } else if (arg.compare("-h") == 0) {
             host = argv[i + 1];
@@ -378,8 +380,6 @@ int main(int argc, char* argv[]) {
     client.getMinExpectedNumber(minExpectedNumber);
     while (minExpectedNumber > 0)
       {
-	client.commandSimulationStep(0);
-
         //The first controller IK ~~~~~~~~~~~~~~~~~~~~~~~~
         //First we compute the queue length of West-East direction
 	int queue_I_IK_0, queue_I_IK_1;
@@ -484,6 +484,7 @@ int main(int argc, char* argv[]) {
 	  }
         step += 1;
 	client.getMinExpectedNumber(minExpectedNumber);
+	usleep(sleep_us);
       }
     float average_car_latency = 1.0 * float(car_latency) / float(car_number);
     float average_truck_latency = 1.0 * float(truck_latency) / float(truck_number);
