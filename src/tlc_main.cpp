@@ -374,7 +374,8 @@ int main(int argc, char* argv[]) {
     int truck_latency=0;
 
     int minExpectedNumber = client.simulation.getMinExpectedNumber();
-    while (true)
+    std::cout << "Min expected number: " << minExpectedNumber << std::endl;
+    while (minExpectedNumber > 0)
       {
 	client.commandSimulationStep(0);
         //The first controller IK ~~~~~~~~~~~~~~~~~~~~~~~~

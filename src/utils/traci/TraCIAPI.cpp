@@ -263,14 +263,14 @@ TraCIAPI::check_commandGetResult(tcpip::Storage& inMsg, int command, int expecte
     if (!ignoreCommandId && cmdId != (command + 0x10)) {
         throw tcpip::SocketException("#Error: received response with command id: " + toString(cmdId) + "but expected: " + toString(command + 0x10));
     }
-    /*
+    int variableID = inMsg.readUnsignedByte();
+    std::string objectID = inMsg.readString();
     if (expectedType >= 0) {
         int valueDataType = inMsg.readUnsignedByte();
         if (valueDataType != expectedType) {
             throw tcpip::SocketException("Expected " + toString(expectedType) + " but got " + toString(valueDataType));
         }
     }
-    */
 }
 
 
@@ -279,9 +279,6 @@ TraCIAPI::processGET(tcpip::Storage& inMsg, int command, int expectedType, bool 
   std::string acknowledgement;
   check_resultState(inMsg, command, ignoreCommandId, &acknowledgement);
   check_commandGetResult(inMsg, command, expectedType, ignoreCommandId);
-  int variableID = inMsg.readUnsignedByte();
-  std::string objectID = inMsg.readString();
-  int valueDataType = inMsg.readUnsignedByte();
 }
 
 
@@ -403,12 +400,6 @@ TraCIAPI::getStringVector(int cmd, int var, const std::string& id, tcpip::Storag
     send_commandGetVariable(cmd, var, id, add);
     processGET(inMsg, cmd, TYPE_STRINGLIST);
     std::vector<std::string> r = inMsg.readStringList();
-    /*
-    unsigned int size = inMsg.readInt();
-    for (unsigned int i = 0; i < size; ++i) {
-        r.push_back(inMsg.readString());
-    }
-    */
     return r;
 }
 
@@ -1280,6 +1271,8 @@ TraCIAPI::TrafficLightScope::setPhase(const std::string& tlsID, unsigned int ind
     content.writeUnsignedByte(TYPE_INTEGER);
     content.writeInt(index);
     myParent.send_commandSetValue(CMD_SET_TL_VARIABLE, TL_PHASE_INDEX, tlsID, content);
+    std::string acknowledgement;
+    myParent.check_resultState(content, CMD_SET_TL_VARIABLE, false, &acknowledgement);
 }
 
 void
@@ -1288,6 +1281,8 @@ TraCIAPI::TrafficLightScope::setProgram(const std::string& tlsID, const std::str
     content.writeUnsignedByte(TYPE_STRING);
     content.writeString(programID);
     myParent.send_commandSetValue(CMD_SET_TL_VARIABLE, TL_PROGRAM, tlsID, content);
+    std::string acknowledgement;
+    myParent.check_resultState(content, CMD_SET_TL_VARIABLE, false, &acknowledgement);
 }
 
 void
@@ -1296,6 +1291,8 @@ TraCIAPI::TrafficLightScope::setPhaseDuration(const std::string& tlsID, unsigned
     content.writeUnsignedByte(TYPE_INTEGER);
     content.writeInt(int(1000 * phaseDuration));
     myParent.send_commandSetValue(CMD_SET_TL_VARIABLE, TL_PHASE_DURATION, tlsID, content);
+    std::string acknowledgement;
+    myParent.check_resultState(content, CMD_SET_TL_VARIABLE, false, &acknowledgement);
 }
 
 void
@@ -1324,6 +1321,8 @@ TraCIAPI::TrafficLightScope::setCompleteRedYellowGreenDefinition(const std::stri
         content.writeString(logic.phases[i].phase);
     }
     myParent.send_commandSetValue(CMD_SET_TL_VARIABLE, TL_COMPLETE_PROGRAM_RYG, tlsID, content);
+    std::string acknowledgement;
+    myParent.check_resultState(content, CMD_SET_TL_VARIABLE, false, &acknowledgement);
 }
 
 
