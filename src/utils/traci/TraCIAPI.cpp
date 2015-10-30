@@ -263,9 +263,6 @@ TraCIAPI::check_commandGetResult(tcpip::Storage& inMsg, int command, int expecte
     if (!ignoreCommandId && cmdId != (command + 0x10)) {
         throw tcpip::SocketException("#Error: received response with command id: " + toString(cmdId) + "but expected: " + toString(command + 0x10));
     }
-    int test = inMsg.readUnsignedByte();
-    std::cout << "CMD ID: " << cmdId << std::endl;
-    std::cout << "test: " << test << std::endl;
     /*
     if (expectedType >= 0) {
         int valueDataType = inMsg.readUnsignedByte();
@@ -279,8 +276,12 @@ TraCIAPI::check_commandGetResult(tcpip::Storage& inMsg, int command, int expecte
 
 void
 TraCIAPI::processGET(tcpip::Storage& inMsg, int command, int expectedType, bool ignoreCommandId) const {
-    check_resultState(inMsg, command, ignoreCommandId);
-    check_commandGetResult(inMsg, command, expectedType, ignoreCommandId);
+  std::string acknowledgement;
+  check_resultState(inMsg, command, ignoreCommandId, &acknowledgement);
+  check_commandGetResult(inMsg, command, expectedType, ignoreCommandId);
+  int variableID = inMsg.readUnsignedByte();
+  std::string objectID = inMsg.readString();
+  int valueDataType = inMsg.readUnsignedByte();
 }
 
 
@@ -401,11 +402,13 @@ TraCIAPI::getStringVector(int cmd, int var, const std::string& id, tcpip::Storag
     tcpip::Storage inMsg;
     send_commandGetVariable(cmd, var, id, add);
     processGET(inMsg, cmd, TYPE_STRINGLIST);
+    std::vector<std::string> r = inMsg.readStringList();
+    /*
     unsigned int size = inMsg.readInt();
-    std::vector<std::string> r;
     for (unsigned int i = 0; i < size; ++i) {
         r.push_back(inMsg.readString());
     }
+    */
     return r;
 }
 
@@ -1267,6 +1270,8 @@ TraCIAPI::TrafficLightScope::setRedYellowGreenState(const std::string& tlsID, co
     content.writeUnsignedByte(TYPE_STRING);
     content.writeString(state);
     myParent.send_commandSetValue(CMD_SET_TL_VARIABLE, TL_RED_YELLOW_GREEN_STATE, tlsID, content);
+    std::string acknowledgement;
+    myParent.check_resultState(content, CMD_SET_TL_VARIABLE, false, &acknowledgement);
 }
 
 void

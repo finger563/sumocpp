@@ -376,6 +376,7 @@ int main(int argc, char* argv[]) {
     int minExpectedNumber = client.simulation.getMinExpectedNumber();
     while (true)
       {
+	client.commandSimulationStep(0);
         //The first controller IK ~~~~~~~~~~~~~~~~~~~~~~~~
         //First we compute the queue length of West-East direction
 	int queue_I_IK_0, queue_I_IK_1;
