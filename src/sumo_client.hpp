@@ -22,14 +22,6 @@ public:
 protected:
   void commandClose();
 
-  tcpip::Storage commandGetVariable(int domID,
-				    int varID,
-				    const std::string& objID,
-				    tcpip::Storage* addData = 0);
-  void commandSetValue(int domID,
-		       int varID,
-		       const std::string& objID,
-		       tcpip::Storage& value);
   void commandSubscribeObjectVariable(int domID,
 				      const std::string& objID,
 				      int beginTime,

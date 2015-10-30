@@ -84,44 +84,6 @@ SUMO_CLIENT::commandClose() {
   }
 }
 
-
-tcpip::Storage
-SUMO_CLIENT::commandGetVariable(int domID, int varID, const std::string& objID, tcpip::Storage* addData) {
-  send_commandGetVariable(domID, varID, objID, addData);
-  answerLog << std::endl << "-> Command sent: <GetVariable>:" << std::endl
-	    << "  domID=" << domID << " varID=" << varID
-	    << " objID=" << objID << std::endl;
-  tcpip::Storage inMsg;
-  try {
-    std::string acknowledgement;
-    check_resultState(inMsg, domID, false, &acknowledgement);
-    answerLog << acknowledgement << std::endl;
-  } catch (tcpip::SocketException& e) {
-    answerLog << e.what() << std::endl;
-    return inMsg;
-  }
-  check_commandGetResult(inMsg, domID, -1, false);
-  return inMsg;
-}
-
-
-void
-SUMO_CLIENT::commandSetValue(int domID, int varID, const std::string& objID, tcpip::Storage& value) {
-  send_commandSetValue(domID, varID, objID, value);
-  answerLog << std::endl << "-> Command sent: <SetValue>:" << std::endl
-	    << "  domID=" << domID << " varID=" << varID
-	    << " objID=" << objID << std::endl;
-  tcpip::Storage inMsg;
-  try {
-    std::string acknowledgement;
-    check_resultState(inMsg, domID, false, &acknowledgement);
-    answerLog << acknowledgement << std::endl;
-  } catch (tcpip::SocketException& e) {
-    answerLog << e.what() << std::endl;
-  }
-}
-
-
 void
 SUMO_CLIENT::commandSubscribeObjectVariable(int domID, const std::string& objID, int beginTime, int endTime, int varNo, std::ifstream& defFile) {
   std::vector<int> vars;
